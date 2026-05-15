@@ -1,30 +1,34 @@
 const express = require("express");
-const dontenv = require("dotenv");
+
+const dotenv = require("dotenv");
+
+const cors = require("cors");
+
 const connectDB = require("./config/db");
+
 const authRoutes = require("./routes/auth.routes");
 
-dontenv.config()
+dotenv.config();
 
-const app = express()
+const app = express();
 
+// middleware
+app.use(express.json());
 
-//midddleware
-app.use(express.json())
+app.use(cors());
 
-// connect to database
-connectDB()
+// database
+connectDB();
 
 // routes
 app.use("/api/auth", authRoutes);
 
+app.get("/", (req, res) => {
+  res.send("API Running...");
+});
 
-app.get("/" , (req,res)=>{
-    res.send("Welcome to the Event Management API")
-})
+const PORT = process.env.PORT || 9090;
 
-
-const PORT = process.env.PORT || 5000
-
-app.listen(PORT, ()=>{
-    console.log(`server running on port ${PORT}..🚀`);
-})
+app.listen(PORT, () => {
+  console.log(`server running on port ${PORT} 🚀`);
+});
