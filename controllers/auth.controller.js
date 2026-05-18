@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("../config/cloudinary");
 
 const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
@@ -15,11 +16,15 @@ const sanitizeUser = (userDoc) => {
 // create user
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !role) {
       return res.status(400).json({ message: "Missing required fields" });
     }
+
+    // validate allowed roles
+    const allowedRoles = ["admin", "organizer", "user"];
+    const assignedRole = allowedRoles.includes(role) ? role : "user";
 
     // check if user already exists
     const existingUser = await User.findOne({ email });
@@ -36,6 +41,7 @@ const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      role: assignedRole,
     });
 
     // create jwt
@@ -112,8 +118,23 @@ const updateProfile = async (req, res) => {
 
     const allowed = ["name", "profileImage", "phone"];
     const updates = {};
+
+    if (req.body.profileImage !== undefined) {
+      if (typeof req.body.profileImage === "string" && req.body.profileImage.startsWith("data:")) {
+        const uploadResult = await cloudinary.uploader.upload(req.body.profileImage, {
+          folder: process.env.CLOUDINARY_FOLDER || "event-management",
+          resource_type: "image",
+        });
+        updates.profileImage = uploadResult.secure_url;
+      } else {
+        updates.profileImage = req.body.profileImage;
+      }
+    }
+
     allowed.forEach((field) => {
-      if (req.body[field] !== undefined) updates[field] = req.body[field];
+      if (field !== "profileImage" && req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
     });
 
     const updated = await User.findByIdAndUpdate(req.user._id, updates, { new: true }).select("-password");
