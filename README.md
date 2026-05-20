@@ -15,7 +15,7 @@ Backend REST API for the Event Management System built with **Node.js**, **Expre
 | JWT | Authentication tokens |
 | bcryptjs | Password hashing |
 | Multer | File upload handling |
-| Cloudinary | Image cloud storage |
+| Cloudinary | Image cloud storage (planned) |
 | dotenv | Environment variables |
 | cors | Cross-origin requests |
 
@@ -26,59 +26,59 @@ Backend REST API for the Event Management System built with **Node.js**, **Expre
 ```
 server/
 ├── models/
-│   ├── User.js                           # User schema
-│   ├── Event.js                          # Event schema
-│   ├── Category.js                       # Category schema
-│   ├── Booking.js                        # Booking schema
-│   ├── Ticket.js                         # Ticket schema
-│   ├── Payment.js                        # Payment schema
-│   ├── Notification.js                   # Notification schema
-│   └── Review.js                         # Review schema
+│   ├── User.js                           # ✅ User schema
+│   ├── Event.js                          # ✅ Event schema
+│   ├── Category.js                       # ✅ Category schema
+│   ├── Booking.js                        # ✅ Booking schema
+│   ├── Ticket.js                         # ✅ Ticket schema
+│   ├── Payment.js                        # ✅ Payment schema
+│   ├── Notification.js                   # ✅ Notification schema
+│   └── Review.js                         # ✅ Review schema
 │
 ├── controllers/
-│   ├── authController.js                 # register, login, getMe
-│   ├── eventController.js                # Event CRUD
-│   ├── categoryController.js             # Category CRUD
-│   ├── bookingController.js              # Booking logic
-│   ├── ticketController.js               # Ticket management
-│   ├── paymentController.js              # Payment processing
-│   ├── notificationController.js         # Notification management
-│   ├── reviewController.js               # Review management
-│   └── adminController.js                # Admin-only operations
+│   ├── authController.js                 # ✅ register, login, getMe
+│   ├── categoryController.js             # ✅ Category CRUD
+│   ├── eventController.js                # ✅ Event CRUD
+│   ├── bookingController.js              # ✅ Booking logic
+│   ├── adminController.js                # ✅ Admin operations
+│   ├── ticketController.js               # ❌ Not started
+│   ├── paymentController.js              # ❌ Not started
+│   ├── notificationController.js         # ❌ Not started
+│   └── reviewController.js               # ❌ Not started
 │
 ├── routes/
-│   ├── authRoutes.js                     # /api/auth
-│   ├── eventRoutes.js                    # /api/events
-│   ├── categoryRoutes.js                 # /api/categories
-│   ├── bookingRoutes.js                  # /api/bookings
-│   ├── ticketRoutes.js                   # /api/tickets
-│   ├── paymentRoutes.js                  # /api/payments
-│   ├── notificationRoutes.js             # /api/notifications
-│   ├── reviewRoutes.js                   # /api/reviews
-│   └── adminRoutes.js                    # /api/admin
+│   ├── authRoutes.js                     # ✅ /api/auth
+│   ├── categoryRoutes.js                 # ✅ /api/categories
+│   ├── eventRoutes.js                    # ✅ /api/events
+│   ├── bookingRoutes.js                  # ✅ /api/bookings
+│   ├── adminRoutes.js                    # ✅ /api/admin
+│   ├── ticketRoutes.js                   # ❌ /api/tickets
+│   ├── paymentRoutes.js                  # ❌ /api/payments
+│   ├── notificationRoutes.js             # ❌ /api/notifications
+│   └── reviewRoutes.js                   # ❌ /api/reviews
 │
 ├── middleware/
-│   ├── authMiddleware.js                 # JWT token verification
-│   ├── roleMiddleware.js                 # isAdmin, isOrganizer
-│   ├── errorMiddleware.js                # Global error handler
-│   └── uploadMiddleware.js              # Multer file upload
+│   ├── authMiddleware.js                 # ✅ JWT token verification
+│   ├── roleMiddleware.js                 # ✅ isAdmin, isOrganizer
+│   ├── errorMiddleware.js                # ✅ Global error handler
+│   └── uploadMiddleware.js               # ❌ Multer file upload
 │
 ├── config/
-│   ├── db.js                             # MongoDB connection
-│   └── cloudinary.js                     # Cloudinary setup
+│   ├── db.js                             # ✅ MongoDB connection
+│   └── cloudinary.js                     # ❌ Cloudinary setup
 │
 ├── utils/
-│   ├── generateToken.js                  # JWT token generator
-│   ├── generateTicketCode.js             # Unique ticket code
-│   ├── sendNotification.js               # Create notification in DB
-│   └── formatResponse.js                 # Consistent JSON responses
+│   ├── generateToken.js                  # ✅ JWT token generator
+│   ├── generateTicketCode.js             # ✅ Unique ticket code
+│   ├── sendNotification.js               # ✅ Create notification in DB
+│   └── formatResponse.js                 # ✅ Consistent JSON responses
 │
 ├── node_modules/
 ├── .env
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
-└── server.js                             # Entry point
+└── server.js                             # ✅ Entry point
 ```
 
 ---
@@ -117,28 +117,37 @@ Backend runs on: **http://localhost:9090**
 | POST | /api/auth/login | Public | Login user |
 | GET | /api/auth/me | Private | Get current user |
 
-### ❌ Categories — Not Started
+### ✅ Categories — Completed
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| GET | /api/categories | Public | Get all categories |
+| GET | /api/categories | Public | Get all active categories |
 | POST | /api/categories | Admin | Create category |
-| DELETE | /api/categories/:id | Admin | Delete category |
+| PUT | /api/categories/:id | Admin | Update category |
+| DELETE | /api/categories/:id | Admin | Soft delete category |
 
-### ❌ Events — Not Started
+### ✅ Events — Completed
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| GET | /api/events | Public | Get all events |
+| GET | /api/events | Public | Get all events (with filters) |
 | GET | /api/events/:id | Public | Get event by ID |
 | POST | /api/events | Organizer | Create event |
-| PUT | /api/events/:id | Organizer | Update event |
-| DELETE | /api/events/:id | Organizer | Delete event |
+| PUT | /api/events/:id | Organizer | Update own event |
+| DELETE | /api/events/:id | Organizer | Delete own event |
 
-### ❌ Bookings — Not Started
+### ✅ Bookings — Completed
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| POST | /api/bookings | Private | Book an event |
+| POST | /api/bookings | Private | Book an event + auto create ticket |
 | GET | /api/bookings/my | Private | Get my bookings |
-| PUT | /api/bookings/:id/cancel | Private | Cancel booking |
+| PUT | /api/bookings/:id/cancel | Private | Cancel booking + restore seats |
+
+### ✅ Admin — Completed
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | /api/admin/users | Admin | Get all users |
+| PUT | /api/admin/users/:id/toggle | Admin | Toggle user active status |
+| GET | /api/admin/analytics | Admin | Get analytics (users, events, revenue) |
+| GET | /api/admin/bookings | Admin | Get all bookings |
 
 ### ❌ Tickets — Not Started
 | Method | Endpoint | Access | Description |
@@ -165,14 +174,6 @@ Backend runs on: **http://localhost:9090**
 | POST | /api/reviews | Private | Add review |
 | GET | /api/reviews/:eventId | Public | Get event reviews |
 | DELETE | /api/reviews/:id | Admin | Delete review |
-
-### ❌ Admin — Not Started
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| GET | /api/admin/users | Admin | Get all users |
-| PUT | /api/admin/users/:id/toggle | Admin | Toggle user active status |
-| GET | /api/admin/analytics | Admin | Get analytics data |
-| GET | /api/admin/bookings | Admin | Get all bookings |
 
 ---
 
@@ -231,10 +232,10 @@ User ─────────────────────────
 Request
    │
    ▼
-authMiddleware       ← Verify JWT token (private routes)
+authMiddleware       ← ✅ Verify JWT token (private routes)
    │
    ▼
-roleMiddleware       ← Check role: isAdmin / isOrganizer
+roleMiddleware       ← ✅ Check role: isAdmin / isOrganizer
    │
    ▼
 Controller           ← Business logic runs here
@@ -243,42 +244,81 @@ Controller           ← Business logic runs here
 Model                ← MongoDB operation
    │
    ▼
-formatResponse       ← Send clean JSON back
+formatResponse       ← ✅ Send clean JSON back
    │
    ▼
-errorMiddleware      ← Catch any unhandled errors
+errorMiddleware      ← ✅ Catch any unhandled errors
 ```
 
 ---
 
 ## ✅ Completed Features
 
-- [x] MongoDB connection setup
-- [x] All 8 Mongoose models
-- [x] JWT token generation utility
-- [x] bcryptjs password hashing
-- [x] Format response utility (successResponse / errorResponse)
-- [x] Auth middleware — JWT verification
-- [x] Error middleware — global handler + 404
-- [x] Auth controller — register, login, getMe
-- [x] Auth routes — /api/auth/register, /api/auth/login, /api/auth/me
-- [x] Server.js — Express setup + all middleware connected
+### Setup & Config
+- [x] MongoDB connection — config/db.js
+- [x] Express server setup — server.js
+- [x] CORS + JSON middleware
+- [x] Global error handler + 404 middleware
+
+### Models (All 8)
+- [x] User, Event, Category, Booking, Ticket, Payment, Notification, Review
+
+### Utilities
+- [x] generateToken.js — JWT token (7d expiry)
+- [x] generateTicketCode.js — EVT-YYYY-XXXX format
+- [x] sendNotification.js — creates notification silently in DB
+- [x] formatResponse.js — successResponse + errorResponse
+
+### Middleware
+- [x] authMiddleware — Bearer JWT verification
+- [x] roleMiddleware — isAdmin, isOrganizer
+- [x] errorMiddleware — global handler + notFound
+
+### Auth Module
+- [x] register — hash password, save user, return token
+- [x] login — verify password, return token + user
+- [x] getMe — return current user from token
+
+### Category Module
+- [x] createCategory — admin only, duplicate name check
+- [x] getAllCategories — public, active only, sorted newest
+- [x] updateCategory — admin only, partial update
+- [x] deleteCategory — admin only, soft delete (isActive: false)
+
+### Event Module
+- [x] createEvent — organizer/admin, sets organizer to req.user._id
+- [x] getAllEvents — public, supports category/date/isFree/search filters
+- [x] getEventById — public, populates organizer + category
+- [x] updateEvent — only owner organizer or admin
+- [x] deleteEvent — only owner organizer or admin
+
+### Booking Module
+- [x] createBooking — check seats, create booking (confirmed),
+      reduce availableSeats, auto-generate ticket, send notification
+- [x] getUserBookings — user's own bookings, populated event + organizer
+- [x] cancelBooking — cancel booking, restore seats, cancel ticket,
+      send notification
+
+### Admin Module
+- [x] getAllBookings — all bookings, populated user + event + organizer
+- [x] getAllUsers — all users, password excluded
+- [x] toggleUserStatus — flip isActive true/false
+- [x] getAnalytics — totalUsers, totalEvents, totalBookings,
+      confirmedBookings, cancelledBookings, totalRevenue
 
 ---
 
 ## 📋 What's Next (Backend)
 
-- [ ] Category controller + routes
-- [ ] Event controller + routes (with image upload)
-- [ ] Booking controller + routes (auto-generate ticket)
-- [ ] Ticket controller + routes
-- [ ] Payment controller + routes
-- [ ] Notification controller + routes
-- [ ] Review controller + routes
-- [ ] Admin controller + routes
-- [ ] Role middleware (isAdmin, isOrganizer)
-- [ ] Upload middleware (Multer + Cloudinary)
-- [ ] Cloudinary config
+- [ ] ticketController + ticketRoutes
+- [ ] paymentController + paymentRoutes
+- [ ] notificationController + notificationRoutes
+- [ ] reviewController + reviewRoutes
+- [ ] uploadMiddleware (Multer)
+- [ ] cloudinary.js config + image upload on events
+- [ ] Admin events management routes
+- [ ] Admin payments routes
+- [ ] Admin reviews routes (approve/delete)
 
 ---
 
@@ -294,23 +334,24 @@ npm install express mongoose dotenv cors bcryptjs jsonwebtoken multer cloudinary
 
 ```
 MongoDB Models          ████████████████████  100%
-Auth Register/Login     ████████████████████  100%
+Auth Module             ████████████████████  100%
 JWT + bcrypt            ████████████████████  100%
-Utilities               ████████████████████  100%
+All Utilities           ████████████████████  100%
 Auth Middleware         ████████████████████  100%
+Role Middleware         ████████████████████  100%
 Error Middleware        ████████████████████  100%
-Category Module         ░░░░░░░░░░░░░░░░░░░░    0%
-Event Module            ░░░░░░░░░░░░░░░░░░░░    0%
-Booking Module          ░░░░░░░░░░░░░░░░░░░░    0%
+Category Module         ████████████████████  100%
+Event Module            ████████████████████  100%
+Booking Module          ████████████████████  100%
+Admin Module            ████████████████████  100%
 Ticket Module           ░░░░░░░░░░░░░░░░░░░░    0%
 Payment Module          ░░░░░░░░░░░░░░░░░░░░    0%
 Notification Module     ░░░░░░░░░░░░░░░░░░░░    0%
 Review Module           ░░░░░░░░░░░░░░░░░░░░    0%
-Admin Module            ░░░░░░░░░░░░░░░░░░░░    0%
 Image Upload            ░░░░░░░░░░░░░░░░░░░░    0%
 Deployment              ░░░░░░░░░░░░░░░░░░░░    0%
 
-Overall Backend         ████░░░░░░░░░░░░░░░░   25%
+Overall Backend         ████████████░░░░░░░░   65%
 ```
 
 ---

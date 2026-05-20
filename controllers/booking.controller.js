@@ -24,6 +24,16 @@ exports.createBooking = async (req, res) => {
       return errorResponse(res, 'Must book at least 1 seat', 400);
     }
 
+    // Check if user has already booked this event
+    const existingBooking = await Booking.findOne({
+      user: req.user._id,
+      event: eventId,
+      status: { $ne: 'cancelled' }
+    });
+    if (existingBooking) {
+      return errorResponse(res, 'You have already booked this event', 400);
+    }
+
     // Find event
     const event = await Event.findById(eventId);
     if (!event) {
