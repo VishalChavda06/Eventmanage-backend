@@ -10,6 +10,8 @@ const authRoutes = require("./routes/auth.routes");
 const categoryRoutes = require("./routes/category.routes");
 const eventRoutes = require("./routes/event.routes");
 const uploadRoutes = require("./routes/upload.routes");
+const bookingRoutes = require("./routes/booking.routes");
+const adminRoutes = require("./routes/admin.routes");
 
 dotenv.config();
 
@@ -52,6 +54,8 @@ const startServer = async () => {
   app.use("/api/categories", categoryRoutes);
   app.use("/api/events", eventRoutes);
   app.use("/api/upload", uploadRoutes);
+  app.use("/api/bookings", bookingRoutes);
+  app.use("/api/admin", adminRoutes);
 
   app.get("/", (req, res) => {
     res.send("API Running...");
